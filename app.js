@@ -5,14 +5,14 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { MongoClient } = require('mongodb');
 const bodyParser = require('body-parser');
-
+require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
-const uri = process.env.MONGODB_URI || 'mongodb://localhost/127.0.0.1';
+const uri = process.env.MONGODB_URI || 'mongodb://localhost27017/salon_beaute_mean';
 MongoClient.connect(uri, { useUnifiedTopology: true
 })
 .then(client => {
