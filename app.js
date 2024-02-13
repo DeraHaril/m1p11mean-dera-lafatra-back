@@ -12,7 +12,7 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-const uri = process.env.MONGODB_URI || 'mongodb+srv://localhost/127.0.0.1';
+const uri = process.env.MONGODB_URI || 'mongodb://localhost/127.0.0.1';
 MongoClient.connect(uri, { useUnifiedTopology: true
 })
 .then(client => {
