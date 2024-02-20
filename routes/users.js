@@ -8,13 +8,11 @@ const bcrypt = require('bcrypt');
 module.exports = (userCollection) => {
   const userController = require('../controllers/userController')(userCollection);
   
-  router.get('/', function(req, res, next) {
-    res.send('respond with a resource');
-  });
+  router.get('/', userController.list);
 
   router.post('/login', userController.traitementConnexionUser);
 
-  router.post('/inscription', userController.traitementInscription);
+  router.post('/', userController.traitementInscription);
 
   return router;
 }

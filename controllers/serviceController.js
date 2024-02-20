@@ -47,9 +47,9 @@ module.exports = (serviceCollection) => {
             try{
                 const serviceList = await serviceCollection.find().toArray();
                 if(serviceList.length > 0){
-                    res.json({ message:'service existe',serviceList});
+                    res.json(serviceList);
                 } else{
-                    res.json({ message:'aucun service dans la base'})
+                    res.json([])
                 }
             } catch(error){
                 console.error(error);

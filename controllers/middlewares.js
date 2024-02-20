@@ -5,8 +5,8 @@ const verifictionToken = (req,res,next) => {
     if(!token){
         return res.status(401).json({ message:"utilisateur non connecté, aucun token trouvé"});
     } 
-    clé = process.env.TOKEN_KEY;
-    jwt.verify(token, clé, (err, decoded) => {
+    key = process.env.TOKEN_KEY;
+    jwt.verify(token, key, (err, decoded) => {
         if(err){
             return res.status(401).json({ message:"utilisateur non connecté, token invalide"});
         }

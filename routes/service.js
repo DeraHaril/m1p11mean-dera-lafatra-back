@@ -5,11 +5,11 @@ const middleware = require('../controllers/middlewares');
 module.exports = (serviceCollection) => {
     const serviceController = require('../controllers/serviceController')(serviceCollection);
 
-    router.get('/liste', serviceController.listeService);
+    router.get('/', serviceController.listeService);
 
-    router.post('/ajout', middleware.verifictionToken, middleware.isAdmin, serviceController.ajoutService);
+    router.post('/', middleware.verifictionToken, middleware.isAdmin, serviceController.ajoutService);
 
-    router.post('/update', middleware.verifictionToken, middleware.isAdmin, serviceController.majService);
+    router.put('/', middleware.verifictionToken, middleware.isAdmin, serviceController.majService);
 
     return router;
 }

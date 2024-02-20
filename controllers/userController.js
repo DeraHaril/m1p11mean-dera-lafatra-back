@@ -49,6 +49,19 @@ module.exports = (userCollection) =>{
         }
     };
     return{
+        list: async(req,res) =>{
+            try{
+                const data = await userCollection.find().toArray();
+                if(data.length > 0){
+                    res.json(data);
+                } else{
+                    res.json([])
+                }
+            } catch(error){
+                console.error(error);
+                throw new Error("Erreur lors de la récupération des utilisateurs");
+            }
+        },
         traitementConnexionUser: async (req, res, next) => {
             const email = req.body.email;
             const password = req.body.password;
