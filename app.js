@@ -10,6 +10,7 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var serviceRouter = require('./routes/service');
+var rendez_vousRouter = require('./routes/rendez_vous');
 
 var app = express();
 
@@ -22,6 +23,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true
   const db = client.db('salon_beaute_mean');
   const userCollection = db.collection('user');
   const serviceCollection = db.collection('service');
+  const render_vousCollection = db.collection('rendez_vous');
 
     // view engine setup
     app.set('views', path.join(__dirname, 'views'));
@@ -37,6 +39,7 @@ MongoClient.connect(uri, { useUnifiedTopology: true
     app.use('/', indexRouter);
     app.use('/users', usersRouter(userCollection));
     app.use('/service', serviceRouter(serviceCollection));
+    app.use('/rendez_vous', rendez_vousRouter(render_vousCollection));
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {

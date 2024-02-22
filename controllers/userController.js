@@ -15,12 +15,12 @@ module.exports = (userCollection) =>{
             throw new Error('Erreur lors du hachage du mot de passe');
         }
     };        
-    //GET tous les users
+
     const getAllClient = () =>{
         const user = userCollection.find().toArray();
         return user;            
     };
-    //GET specific user
+
     const getUserByEmail = (email) => {
         try{
             const user = userCollection.findOne({ email: email});
@@ -34,7 +34,6 @@ module.exports = (userCollection) =>{
                    
     };
     
-    //CREATE user
     createUser = async(nom, prenom, email, password, role) => {
         try{
             if(role == "client"){
@@ -42,10 +41,10 @@ module.exports = (userCollection) =>{
             } else{
                 await userCollection.insertOne({nom: nom, prenom: prenom, email: email,password: password, role: role});
             }
-            console.log("réussi"); 
+            return true; 
         } catch(error){
             console.error(error);
-            console.log("erreur d'insertion"); 
+            return false;
         }
     };
     return{
@@ -58,7 +57,7 @@ module.exports = (userCollection) =>{
                     const passwordMatch = await bcrypt.compare(password, user.password);
                     if (passwordMatch) {
                         const token = jwt.sign({ userId: user._id, role: user.role }, secretKey, { expiresIn: '1h' });
-                        res.status(200).header('Authorization', `Bearer ${token}`).json({ success: true, message: 'Connexion réussie' });
+                        res.status(200).json({ success: true, message: 'Connexion réussie',token });
                     } else {
                         res.json({ success: false, message: "mot de passe incorrecte" });
                     }
@@ -82,15 +81,18 @@ module.exports = (userCollection) =>{
             if(password === password_verification){
               try{
                 const hashedPassword = await hashPassword(password);
-                const user = await createUser(nom,prenom,email, hashedPassword, role); 
-        
-                //Connexion de l'user apres inscription
-                const userInscrit = await getUserByEmail(email);
-                const token = jwt.sign({ userId: userInscrit._id, userInscrit: userInscrit.role}, secretKey, { expiresIn: '1h' });
-                res.status(201).header('Authorization', `Bearer ${token}`).json({ success: true, message: 'Inscription terminée avec succès'});
+                const ajoutUser = await createUser(nom,prenom,email, hashedPassword, role); 
+                if(ajoutUser){
+                    //Connexion de l'user apres inscription
+                    const userInscrit = await getUserByEmail(email);
+                    const token = jwt.sign({ userId: userInscrit._id, userInscrit: userInscrit.role}, secretKey, { expiresIn: '1h' });
+                    res.status(201).json({ success: true, message: 'Inscription terminée avec succès', token});                    
+                } else{
+                    res.status(500).json({ success: false, message: 'Inscription dans la base échouée'});     
+                }
               } catch(error){
                 console.error(error);
-                res.status(400).json({success: false, message:"Erreur de traitement d'inscription"});
+                res.status(500).json({success: false, message:"Erreur de traitement d'inscription"});
               }
             }
             else{
