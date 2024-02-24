@@ -9,6 +9,7 @@ const authRouter = require("./routes/auth");
 const usersRouter = require("./routes/users");
 const serviceRouter = require("./routes/service");
 const createError = require("http-errors");
+const rendez_vousRouter = require('./routes/rendez_vous');
 
 class AppInitializer {
     constructor(app) {
@@ -34,6 +35,7 @@ class AppInitializer {
         this.app.use('/', authRouter);
         this.app.use('/users', usersRouter);
         this.app.use('/services', serviceRouter);
+        this.app.use('/rdv', rendez_vousRouter);
     };
 
     initConfig() {
@@ -54,7 +56,7 @@ class AppInitializer {
         });
 
         // error handler
-        this.app.use(function (err, req, res, next) {
+        this.app.use(function (err, req, res) {
             // set locals, only providing error in development
             res.locals = {
                 message: err.message,
