@@ -25,8 +25,23 @@ const isAdmin = (req, res, next) => {
     }
 };
 
+const isEmploye = (req, res, next) => {
+    if(req.user.role =='employe'){
+        next();
+    } else {
+        return res.status(401).json({ message:"accès non autorisé, uniquement aux employés"});
+    }
+};
+
+const isClient = (req, res, next) => {
+    if(req.user.role =='client'){
+        next();
+    } else {
+        return res.status(401).json({ message:"accès non autorisé, uniquement aux clients"});
+    }
+};
 
 
 module.exports = {
-    verifictionToken, isAdmin
+    verifictionToken, isAdmin, isEmploye, isClient
 }

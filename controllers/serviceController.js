@@ -23,7 +23,25 @@ module.exports = () => {
         }
     };
 
-    const updateService = async(id, nomService, tarif, duree) => {
+    const ajoutService = async(service, tarif, duree) => {
+        const dateActuelle = new Date().toISOString();
+        try{
+            await serviceCollection.insertOne({
+                service: service,
+                tarif: tarif,
+                duree:duree,
+                date_ajout: dateActuelle,
+                date_modification: null
+            });
+            return true;
+        }catch(error){
+            console.error(error);
+            return false
+        }
+    }
+
+    updateService = async(id, nomService, tarif, duree) => {
+        const dateActuelle = new Date().toISOString();
         try{
             const result = await serviceCollection.updateOne(
                 { _id: id },
@@ -31,7 +49,8 @@ module.exports = () => {
                     $set: {
                         service: nomService,
                         tarif: tarif,
-                        duree: duree
+                        duree: duree,
+                        date_modification: dateActuelle
                     }
                 });
             if (result.matchedCount > 0 && result.modifiedCount > 0) {
@@ -46,17 +65,17 @@ module.exports = () => {
     };
 
     return{
-        listeService: async(req,res) =>{
+        listeService: async(req, res) =>{
             try{
                 const serviceList = await serviceCollection.find().toArray();
                 if(serviceList.length > 0){
                     res.json(serviceList);
                 } else{
-                    res.json([])
+                    res.status(204).json([])
                 }
             } catch(error){
                 console.error(error);
-                throw new Error("Erreur lors de la récupération de tous les services");
+                res.status(500).json({ message: "Erreur lors de la récupération de tous les services"});
             }
         },
 
@@ -64,15 +83,15 @@ module.exports = () => {
             const service = req.body.service;
             const tarif = req.body.tarif;
             const duree = req.body.duree;
-            
+
+            const dateActuelle = new Date().toISOString();
             if(service && tarif && duree){
                 tarifInt = parseInt(tarif);
-                try{    
-                    const creationService = await serviceCollection.insertOne({ service: service, tarif: tarifInt, duree:duree });
+                const creationService = await ajoutService(service, tarifInt,duree);
+                if(creationService){
                     res.status(201).json({ success: true, message:'service ajouté avec succès'});  
-                } catch(error){
-                    console.error(error);
-                    res.status(400).json({ success: false, message:"erreur lors de l'ajput de service"});
+                } else{
+                    res.status(400).json({ success: false, message:"erreur lors de l'ajout de service"});
                 }
             } else {
                 res.status(400).json({ success: false, message:"les données reçues sont manquantes"});
