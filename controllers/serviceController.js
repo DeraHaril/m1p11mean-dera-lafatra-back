@@ -1,16 +1,19 @@
 const { ObjectId } = require('mongodb');
+const {collections} = require("../database");
 
-module.exports = (serviceCollection) => {
-    getServiceByName= async (serviceName) => {
+module.exports = () => {
+    const serviceCollection = collections.services
+
+    const getServiceByName = async (serviceName) => {
         try {
-            const service = await serviceCollection.findOne({ service: serviceName });
-            return service;
+            return await serviceCollection.findOne({service: serviceName});
         } catch (error) {
             console.error(error);
             throw new Error("Erreur lors de la récupération du service par nom");
         }
     };
-    getServiceById = async (id) => {
+
+    const getServiceById = async (id) => {
         try {
             const service = await serviceCollection.findOne({ _id: id });
             return service;
@@ -20,7 +23,7 @@ module.exports = (serviceCollection) => {
         }
     };
 
-    updateService = async(id, nomService, tarif, duree) => {
+    const updateService = async(id, nomService, tarif, duree) => {
         try{
             const result = await serviceCollection.updateOne(
                 { _id: id },
