@@ -35,7 +35,7 @@ class AppInitializer {
         this.app.use('/', authRouter);
         this.app.use('/users', usersRouter);
         this.app.use('/services', serviceRouter);
-        this.app.use('/rdv', rendez_vousRouter);
+        this.app.use('/rdvs', rendez_vousRouter);
     };
 
     initConfig() {

@@ -23,13 +23,14 @@ module.exports = () => {
         }
     };
 
-    const ajoutService = async(service, tarif, duree) => {
+    const ajoutService = async(service, tarif, duree, commission) => {
         const dateActuelle = new Date().toISOString();
         try{
             await serviceCollection.insertOne({
                 service: service,
                 tarif: tarif,
                 duree:duree,
+                commission:commission,
                 date_ajout: dateActuelle,
                 date_modification: null
             });
@@ -40,7 +41,7 @@ module.exports = () => {
         }
     }
 
-    updateService = async(id, nomService, tarif, duree) => {
+    updateService = async(id, nomService, tarif, duree, commission) => {
         const dateActuelle = new Date().toISOString();
         try{
             const result = await serviceCollection.updateOne(
@@ -50,6 +51,7 @@ module.exports = () => {
                         service: nomService,
                         tarif: tarif,
                         duree: duree,
+                        commission:commission,
                         date_modification: dateActuelle
                     }
                 });
@@ -83,11 +85,12 @@ module.exports = () => {
             const service = req.body.service;
             const tarif = req.body.tarif;
             const duree = req.body.duree;
+            const commission = req.body.commission;
 
             const dateActuelle = new Date().toISOString();
             if(service && tarif && duree){
                 tarifInt = parseInt(tarif);
-                const creationService = await ajoutService(service, tarifInt,duree);
+                const creationService = await ajoutService(service, tarifInt,duree, commission);
                 if(creationService){
                     res.status(201).json({ success: true, message:'service ajouté avec succès'});  
                 } else{
@@ -103,12 +106,13 @@ module.exports = () => {
             const nomService = req.body.service;
             const tarif = req.body.tarif;
             const duree = req.body.duree;
+            const commission = req.body.commission;
 
             if(id && tarif){
                 const idservice = new ObjectId(id);
                 const tarifService = parseInt(tarif);
                 try{
-                    const update = await updateService(idservice, nomService, tarifService, duree);
+                    const update = await updateService(idservice, nomService, tarifService, duree, commission);
                     console.log(update);
                     if(update){
                         res.status(201).json({ success: true, message:"Tarif mis a jour avec succès"});

@@ -1,7 +1,7 @@
 const {ObjectId} = require('mongodb');
 const {collections} = require("../database");
-const insertRendez_vous = async(date, id_service, id_client, id_employe) => {
-    try{
+const insertRendez_vous = async (date, id_service, id_client, id_employe) => {
+    try {
         const dateActuelle = new Date().toISOString();
         const insertRDV = await collections.rdvs.insertOne({
             date_rdv: new Date(date),
@@ -13,14 +13,14 @@ const insertRendez_vous = async(date, id_service, id_client, id_employe) => {
         });
         //console.log(insertRDV);
         return true;
-    } catch(error) {
+    } catch (error) {
         console.error(error);
         return false;
     }
 }
 
-const getAllRendez_vous = async() => {
-    try{
+const getAllRendez_vous = async () => {
+    try {
         const allRDV = await collections.rdvs.aggregate([
             {
                 $lookup: {
@@ -75,78 +75,78 @@ const getAllRendez_vous = async() => {
         const AllRDVArray = await allRDV.toArray();
         console.log(AllRDVArray)
         return AllRDVArray;
-    } catch(error){
+    } catch (error) {
         console.error(error);
         allRDV = [];
         return allRDV;
     }
 }
 
-    const getRealizedRendez_vous = async(realized) => {
-        try{
-            const allRDV = await collections.rdvs.aggregate([
-                {
-                    $match: {
-                        effectue: realized
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'user',
-                        localField: 'id_client',
-                        foreignField: '_id',
-                        as: 'client'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'user',
-                        localField: 'id_employe',
-                        foreignField: '_id',
-                        as: 'employe'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'service',
-                        localField: 'id_service',
-                        foreignField: '_id',
-                        as: 'service'
-                    }
-                },
-                {
-                    $unwind: '$client'
-                },
-                {
-                    $unwind: '$employe'
-                },
-                {
-                    $unwind: '$service'
-                },
-                {
-                    $project: {
-                        id: 1,
-                        date_rdv: 1,
-                        id_client: '$client.id',
-                        nom_client: '$client.nom',
-                        email_client: '$client.email',
-                        id_service: '$service.id',
-                        nom_service: '$service.nom',
-                        tarif: '$service.tarif',
-                        duree: '$service.duree',
-                        id_employe: '$employe.id',
-                        effectue: 1
-                    }
+const getRealizedRendez_vous = async (realized) => {
+    try {
+        const allRDV = await collections.rdvs.aggregate([
+            {
+                $match: {
+                    effectue: realized
                 }
-            ]);
+            },
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'id_client',
+                    foreignField: '_id',
+                    as: 'client'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'user',
+                    localField: 'id_employe',
+                    foreignField: '_id',
+                    as: 'employe'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'service',
+                    localField: 'id_service',
+                    foreignField: '_id',
+                    as: 'service'
+                }
+            },
+            {
+                $unwind: '$client'
+            },
+            {
+                $unwind: '$employe'
+            },
+            {
+                $unwind: '$service'
+            },
+            {
+                $project: {
+                    id: 1,
+                    date_rdv: 1,
+                    id_client: '$client.id',
+                    nom_client: '$client.nom',
+                    email_client: '$client.email',
+                    id_service: '$service.id',
+                    nom_service: '$service.nom',
+                    tarif: '$service.tarif',
+                    duree: '$service.duree',
+                    id_employe: '$employe.id',
+                    effectue: 1
+                }
+            }
+        ]);
 
-            return await allRDV.toArray();
-        } catch(error){
-            console.error(error);
-            allRDV = [];
-            return allRDV;
-        }
+        return await allRDV.toArray();
+    } catch (error) {
+        console.error(error);
+        allRDV = [];
+        return allRDV;
     }
+}
 
 module.exports = {
     listeRendez_vous: async (req, res) => {

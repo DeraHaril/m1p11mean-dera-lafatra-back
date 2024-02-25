@@ -1,15 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const router = require('express').Router();
 const middleware = require('../controllers/middlewares');
 
-module.exports = () => {
-    const {listeRendez_vous, listeRendez_vousEffectue, ajoutRendez_vous} = require('../controllers/rendez_vouController');
-    
-    router.get('/liste', listeRendez_vous);
+const {listeRendez_vous, listeRendez_vousEffectue, ajoutRendez_vous} = require('../controllers/rendez_vouController');
 
-    router.get('/listeEffectue', listeRendez_vousEffectue);
+router.get('/', listeRendez_vous);
 
-    router.post('/ajout', middleware.verifictionToken, middleware.isClient, ajoutRendez_vous);
+router.get('/listeEffectue', listeRendez_vousEffectue);
 
-    return router;
-}
+router.post('/', middleware.verifictionToken, middleware.isClient, ajoutRendez_vous);
+
+module.exports = router
