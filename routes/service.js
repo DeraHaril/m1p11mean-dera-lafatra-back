@@ -9,7 +9,7 @@ module.exports = () => {
 
     router.post('/', middleware.verifictionToken, middleware.isAdmin, serviceController.ajoutService);
 
-    router.put('/', middleware.verifictionToken, middleware.isAdmin, serviceController.majService);
+    router.put('/:id', middleware.verifictionToken, middleware.isAdmin, serviceController.majService);
 
     return router;
 }

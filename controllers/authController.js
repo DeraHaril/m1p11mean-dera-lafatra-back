@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const {ObjectId} = require("mongodb");
 const {collections} = require("../database");
 
-const getUserByToken = async (req, res) => {
+const getCurrentUser = async (req, res) => {
     try {
         const user = await collections.users.findOne({_id: new ObjectId(req.user.userId)});
 
@@ -41,4 +41,4 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { getUserByToken, login}
+module.exports = { getUserByToken: getCurrentUser, login}

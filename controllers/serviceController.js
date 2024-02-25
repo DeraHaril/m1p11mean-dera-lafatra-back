@@ -99,7 +99,7 @@ module.exports = () => {
         },
 
         majService: async(req,res) => {
-            const id = req.body.id;
+            const id = req.params.id;
             const nomService = req.body.service;
             const tarif = req.body.tarif;
             const duree = req.body.duree;
