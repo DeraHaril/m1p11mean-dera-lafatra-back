@@ -76,6 +76,23 @@ module.exports = {
         }
     },
 
+    suppressionService: async (req, res) => {
+        try {
+            const id = req?.params?.id
+            const result = await collections.services.deleteOne({ _id: new ObjectId(id) });
+
+            if (result && result.deletedCount) {
+                res.status(202).json({message: "Element supprimer"});
+            } else if (!result) {
+                res.status(400).json({message: `Failed to remove object with: ID ${id}`});
+            } else if (!result.deletedCount) {
+                res.status(404).json({message: `Failed to find object with: ID ${id}`});
+            }
+        } catch (error) {
+            console.error(error.message);
+            res.status(400).json({message: error.message});
+        }
+    },
     ajoutService: async (req, res) => {
         const service = req.body.service;
         const tarif = req.body.tarif;

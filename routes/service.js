@@ -9,5 +9,7 @@ router.post('/', middleware.verifictionToken, middleware.isAdmin, serviceControl
 
 router.put('/:id', middleware.verifictionToken, middleware.isAdmin, serviceController.majService);
 
+router.delete('/:id', middleware.verifictionToken, middleware.isAdmin, serviceController.suppressionService);
+
 
 module.exports = router
