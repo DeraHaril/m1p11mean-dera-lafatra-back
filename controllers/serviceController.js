@@ -82,7 +82,7 @@ module.exports = {
             const result = await collections.services.deleteOne({ _id: new ObjectId(id) });
 
             if (result && result.deletedCount) {
-                res.status(202).json({message: "Element supprimer"});
+                res.status(202).json({message: "Element supprimé"});
             } else if (!result) {
                 res.status(400).json({message: `Failed to remove object with: ID ${id}`});
             } else if (!result.deletedCount) {

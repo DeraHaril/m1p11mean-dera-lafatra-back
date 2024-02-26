@@ -31,12 +31,24 @@ const getAllRendez_vous = async () => {
                 }
             },
             {
+              $unwind: {
+                  path: '$client',
+                  preserveNullAndEmptyArrays: true
+              }
+            },
+            {
                 $lookup: {
                     from: 'user',
                     localField: 'id_employe',
                     foreignField: '_id',
                     as: 'employe'
                 }
+            },
+            {
+              $unwind: {
+                  path: '$employe',
+                  preserveNullAndEmptyArrays: true
+              }
             },
             {
                 $lookup: {
@@ -47,26 +59,23 @@ const getAllRendez_vous = async () => {
                 }
             },
             {
-                $unwind: '$client'
-            },
-            {
-                $unwind: '$employe'
-            },
-            {
-                $unwind: '$service'
+              $unwind: {
+                  path: '$service',
+                  preserveNullAndEmptyArrays: true
+              }
             },
             {
                 $project: {
                     id: 1,
                     date_rdv: 1,
-                    id_client: '$client.id',
+                    id_client: '$client._id',
                     nom_client: '$client.nom',
                     email_client: '$client.email',
-                    id_service: '$service.id',
+                    id_service: '$service._id',
                     nom_service: '$service.nom',
                     tarif: '$service.tarif',
                     duree: '$service.duree',
-                    id_employe: '$employe.id',
+                    id_employe: '$employe._id',
                     effectue: 1
                 }
             }
@@ -152,7 +161,7 @@ module.exports = {
     listeRendez_vous: async (req, res) => {
         try {
             const liste_rdv = await getAllRendez_vous();
-            //console.log(liste_rdv);
+            console.log(liste_rdv);
             if (liste_rdv.length > 0) {
                 res.status(200).json({success: true, message: "Rendez-vous envoyés", data: liste_rdv});
             } else {
