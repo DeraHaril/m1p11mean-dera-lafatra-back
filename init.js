@@ -10,6 +10,7 @@ const usersRouter = require("./routes/users");
 const serviceRouter = require("./routes/service");
 const createError = require("http-errors");
 const rendez_vousRouter = require('./routes/rendez_vous');
+const offre_special = require("./routes/offreSpecial");
 
 class AppInitializer {
     constructor(app) {
@@ -36,6 +37,7 @@ class AppInitializer {
         this.app.use('/users', usersRouter);
         this.app.use('/services', serviceRouter);
         this.app.use('/rdvs', rendez_vousRouter);
+        this.app.use('/offre_special', offre_special);
     };
 
     initConfig() {

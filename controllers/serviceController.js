@@ -1,5 +1,6 @@
 const {ObjectId} = require('mongodb');
 const {collections} = require("../database");
+
 const getServiceByName = async (serviceName) => {
     try {
         return await collections.services.findOne({service: serviceName});
@@ -8,6 +9,56 @@ const getServiceByName = async (serviceName) => {
         throw new Error("Erreur lors de la récupération du service par nom");
     }
 };
+
+const getServiceAvecPromotion = async() => {
+    try{
+        const data = await collections.services.aggregate([
+            {
+                $lookup: {
+                  from: "offre_special",
+                  localField: "_id",
+                  foreignField: "id_service",
+                  as: "offre_speciale"
+                }
+            },
+            {
+                $unwind: {
+                    path: "$offre_speciale",
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    nom: 1,
+                    tarif: 1,
+                    commission: 1,
+                    offre_speciale: {
+                        $cond: {
+                        if: {
+                            $and: [
+                            { $gt: ["$offre_speciale.date_fin",new Date()] }, //greater(ilay offre spéciial mbol date ao arinan'ny date actuelle)
+                            ]
+                        },
+                        then: {
+                            _id: "$offre_speciale._id",
+                            promotion: "$offre_speciale.promotion",
+                            date_ajout: "$offre_speciale.date_ajout",
+                            date_fin: "$offre_speciale.date_fin"
+                        },
+                            else: null
+                        }
+                    }
+                }
+            }
+        ]);
+        return data.toArray();
+    } catch(error){
+        console.error(error.message);
+        data = [];
+        return data;
+    }
+}
 
 const getServiceById = async (id) => {
     try {
@@ -67,6 +118,19 @@ module.exports = {
             const serviceList = await collections.services.find().toArray();
             if (serviceList.length > 0) {
                 res.json(serviceList);
+            } else {
+                res.status(204).json([])
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({message: "Erreur lors de la récupération de tous les services"});
+        }
+    },
+    listeServicePromotion: async(req,res) =>{
+        try {
+            const serviceListAvecPromotion = await getServiceAvecPromotion();
+            if (serviceListAvecPromotion.length > 0) {
+                res.status(200).json({success:true, data:serviceListAvecPromotion});
             } else {
                 res.status(204).json([])
             }
