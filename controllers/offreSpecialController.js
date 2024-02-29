@@ -46,7 +46,7 @@ const getAllOffreNotExpired = async() => {
                     date_ajout:1, 
                     date_fin:1,
                     id_service: '$service._id',
-                    nom_service: '$service.service',
+                    nom_service: '$service.nom',
                     tarif_normal: '$service.tarif',
                 }
             }

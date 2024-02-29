@@ -14,6 +14,7 @@ const connectToDatabase = async () => {
     collections.services = db.collection('service');
     collections.rdvs = db.collection('rendez_vous');
     collections.offre_special = db.collection('offre_special');
+    collections.taches = db.collection('taches');
 
     console.log(`Connected to Database ${uri} ${dbName}`);
 }

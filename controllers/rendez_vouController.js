@@ -164,9 +164,30 @@ const getRealizedRendez_vous = async (realized) => {
         allRDV = [];
         return allRDV;
     }
+};
+
+const updateRdvDone = async(id_rdvs) => {
+    try{
+        const update = await collections.rdvs.updateOne(
+            { _id: new ObjectId(id_rdvs)},
+            { $set: {effectue: true}}
+        );
+        if(update.modifiedCount > 0){
+            console.log('mise a jour réussi, rdvs effectué');
+            return true;
+        } else{
+            console.log("rdvs non mis a jour, erreur de requete");
+            return false;
+        }
+    } catch(error){
+        console.error(error.message);
+        return false;
+    }
 }
 
 module.exports = {
+    updateRdvDone,
+    
     listeRendez_vous: async (req, res) => {
         try {
             const liste_rdv = await getAllRendez_vous();
@@ -229,5 +250,6 @@ module.exports = {
             console.error(error);
             res.status(500).json({success: false, message: "Erreur interne"});
         }
-    }
+    },
+
 }

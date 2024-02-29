@@ -30,7 +30,7 @@ const getServiceAvecPromotion = async() => {
             {
                 $project: {
                     _id: 1,
-                    nom: 1,
+                    service: 1,
                     tarif: 1,
                     commission: 1,
                     offre_speciale: {
@@ -73,11 +73,11 @@ const ajoutService = async (service, tarif, duree, commission) => {
     const dateActuelle = new Date().toISOString();
     try {
         await collections.services.insertOne({
-            service: service,
+            nom: service,
             tarif: tarif,
             duree: duree,
             commission: commission,
-            date_ajout: dateActuelle,
+            date_ajout: new Date(dateActuelle),
             date_modification: null
         });
         return true;
@@ -94,7 +94,7 @@ updateService = async (id, nomService, tarif, duree, commission) => {
             {_id: id},
             {
                 $set: {
-                    service: nomService,
+                    nom: nomService,
                     tarif: tarif,
                     duree: duree,
                     commission: commission,

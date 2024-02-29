@@ -9,9 +9,9 @@ router.get('/offerNotExpired', getOffreNotExpired);
 
 router.get('/:id', getSpecificOffre);
 
-router.post('/', createOffre);
+router.post('/', middleware.verifictionToken, middleware.isAdmin, createOffre);
 
-router.put('/:id', updateOffre);
+router.put('/:id', middleware.verifictionToken, middleware.isAdmin, updateOffre);
 
 router.delete('/:id');
 
