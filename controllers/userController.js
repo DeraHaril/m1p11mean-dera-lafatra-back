@@ -2,6 +2,92 @@ const {collections} = require("../database");
 const {hashPassword} = require("../services/bcryptService");
 const {ObjectId} = require("mongodb");
 
+const ajoutColonnePreference = async (id) => {
+    try {
+        const colonnePreference = 'preference';
+        const colonne_id_employe = 'id_employe';
+        const colonne_id_service = 'id_service';
+
+        const addColonnePreference = await collections.users.updateOne(
+            {
+                _id: new ObjectId(id)
+            },
+            {
+                $set: {
+                    [colonnePreference]: {
+                        [colonne_id_employe]: [],
+                        [colonne_id_service]: []
+                    }
+                }
+            }
+        );
+
+        return true;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+
+
+const ajoutServicePrefere = async(id, id_service) =>{
+    try{
+        const colonnePreference = 'preference';
+        const colonne_id_service = 'id_service';
+        
+        const updateResult = await collections.users.updateOne(
+            {
+                _id: new ObjectId(id)
+            },
+            {
+                $addToSet: {
+                    [`${colonnePreference}.${colonne_id_service}`]: id_service !== null ? new ObjectId(id_service) : null
+                }
+            }
+        );
+        console.log(updateResult.modifiedCount > 0);
+        return true;
+
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+
+const ajoutEmployePrefere = async(id, id_employe) =>{
+    try{
+        const colonnePreference = 'preference';
+        const colonne_id_employe = 'id_employe';
+        
+        const updateResult = await collections.users.updateOne(
+            {
+                _id: new ObjectId(id)
+            },
+            {
+                $addToSet: {
+                    [`${colonnePreference}.${colonne_id_employe}`]: id_employe !== null ? new ObjectId(id_employe) : null,
+                }
+            }
+        );
+        console.log(updateResult.modifiedCount > 0);
+        return true;
+
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+};
+
+const getUserById = async(id) =>{
+    try{
+        const user = await collections.users.findOne({ _id: new ObjectId(id)});
+        return user;
+    } catch(error){
+        console.error(error);
+        return null;
+    }
+};
+
 module.exports = {
     list: async (req, res) => {
         try {
@@ -106,5 +192,29 @@ module.exports = {
             console.error(error.message);
             res.status(400).send(error.message);
         }
+    },
+    
+    addPreference: async(req,res) =>{
+        try{
+            const id = req.params.id;
+            const id_employePrefere = req.body.id_employe;
+            const id_servicePrefere = req.body.id_service;
+
+            const user = await getUserById(id);
+            if(user.preference == undefined){
+                const ajoutColonnePref = await ajoutColonnePreference(id);
+            }
+            if(id_employePrefere != undefined){
+                const addEmployePreference = await ajoutEmployePrefere(id,id_employePrefere);
+            }
+            if(id_servicePrefere != undefined){
+                const addservicePreference = await ajoutServicePrefere(id,id_employePrefere);
+            }
+            res.status(201).json({success:true, message:"préférence ajoutée"});
+        }catch(error){
+            console.error(error);
+            res.status(500).json({success:false, message:"erruer interne", error: error.message });
+        }
+
     }
 }
