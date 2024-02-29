@@ -7,4 +7,6 @@ router.get('/rdvs', middleware.verifictionToken, middleware.isAdmin, controller.
 
 router.get('/chiffreAffaire', middleware.verifictionToken, middleware.isAdmin, controller.chiffreAffaireParJourParMois);
 
+router.get('/chiffreAffaire/date', middleware.verifictionToken, middleware.isAdmin, controller.getChiffreAffaireMoisPrécis);
+
 module.exports = router

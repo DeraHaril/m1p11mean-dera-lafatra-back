@@ -170,6 +170,48 @@ const getChiffreAffaireMois = async() =>{
         return false;
     }
 };
+const getChiffreAffaireMoisPrécise = async(date) => {
+    try {
+        const data = await collections.taches.aggregate([
+            {
+                $group: {
+                    _id: {
+                        month: { $month: "$date_tache" },
+                        year: { $year: "$date_tache" }
+                    },
+                    chiffreAffaires_jour: { $sum: "$montant" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    date: {
+                        $dateFromParts: {
+                            year: "$_id.year",
+                            month: "$_id.month",
+                            day: 1,
+                            hour: 0,
+                            minute: 0,
+                            second: 0,
+                            millisecond: 0
+                        }
+                    },
+                    chiffreAffaires_jour: 1
+                }
+            },
+            {
+                $sort: {
+                    date: 1
+                }
+            } 
+        ]);
+
+        return data.toArray();
+    } catch(error) {
+        console.error(error);
+        return false;
+    }
+};
 
 module.exports = {
     nbRDVParJourParMois: async(req,res) =>{
@@ -225,5 +267,21 @@ module.exports = {
         }
     },
 
+    getChiffreAffaireMoisPrécis: async(req,res) => {
+        const date = req.body.date;
+        try{
+            const CA = await getChiffreAffaireMoisPrécise(date);
+            if(CA.length > 0){
+                res.status(200).json({ success:true, message:"chiffre d'affaire disponible", data: CA[0]});
+            } else if(CA.length == 0){
+                res.status(200).json({ success:false, message:"chiffre d'affaire non disponible"});
+            } else if(!CA){
+                res.status(400).json({ success:false, message:"erreur de requete"});
+            }
+        } catch(error){
+            console.error(error);
+            res.status(500).json({success:false, message:'erreur interne',error: error.message});
+        }
+    },
     
 }
