@@ -140,7 +140,7 @@ module.exports = {
         const role = req.body.role;
 
         if (!password) {
-            password = process.env.DEFAULT_PASSWORD || '!Pa$$word'
+            password = process.env.DEFAULT_PASSWORD || 'Pa$$word!'
         }
 
         try {

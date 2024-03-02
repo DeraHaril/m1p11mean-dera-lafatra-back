@@ -13,6 +13,7 @@ const rendez_vousRouter = require('./routes/rendez_vous');
 const offre_specialRouter = require("./routes/offreSpecial");
 const tachesRouter = require("./routes/taches");
 const statistiqueRouter = require('./routes/statistique');
+const depenseRouter = require('./routes/depense');
 
 class AppInitializer {
     constructor(app) {
@@ -42,6 +43,7 @@ class AppInitializer {
         this.app.use('/offre_special', offre_specialRouter);
         this.app.use('/taches', tachesRouter);
         this.app.use('/statistique', statistiqueRouter);
+        this.app.use('/depenses', depenseRouter);
     };
 
     initConfig() {
