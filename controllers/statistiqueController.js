@@ -138,7 +138,7 @@ const getChiffreAffaireMois = async() =>{
                         month: { $month: "$date_tache" },
                         year: { $year: "$date_tache" }
                     },
-                    chiffreAffaires_jour: { $sum: "$montant" }
+                    chiffreAffaires_mois: { $sum: "$montant" }
                 }
             },
             {
@@ -155,7 +155,7 @@ const getChiffreAffaireMois = async() =>{
                             millisecond: 0
                         }
                     },
-                    chiffreAffaires_jour: 1
+                    chiffreAffaires_mois: 1
                 }
             },
             {
